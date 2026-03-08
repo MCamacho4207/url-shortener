@@ -115,7 +115,7 @@ public class UrlShortenerControllerTest {
     }
 
     @Test
-    void willReturn201PostShortenUrlSuccess() throws Exception {
+    void willReturn201PostShortenUrlWithCustomAliasSuccess() throws Exception {
         // given
         String myAlias = "myAlias";
         String fullUrl = "https://www.google.com";
@@ -123,6 +123,27 @@ public class UrlShortenerControllerTest {
         ShortenUrlRequest request = new ShortenUrlRequest(myAlias, fullUrl);
         CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, shortUrl);
         given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(customUrl);
+
+        // when
+        ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request)));
+
+        // then
+        resultCompletes.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.shortUrl").value("https://www.mydomain.com/myAlias"));
+    }
+
+    @Test
+    void willReturn201PostShortenUrlWithRandomAliasSuccess() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        String fullUrl = "https://www.google.com";
+        String shortUrl = "https://www.mydomain.com/myAlias";
+        ShortenUrlRequest request = new ShortenUrlRequest(null, fullUrl);
+        CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, shortUrl);
+        given(urlShortenerService.shortenUrlWithCustomAlias(null, fullUrl)).willReturn(customUrl);
 
         // when
         ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
