@@ -42,7 +42,7 @@ public class UrlShortenerControllerTest {
     }
 
     @Test
-    void willGetAllUrlsSuccess() throws Exception {
+    void willReturn200GetAllUrlsSuccess() throws Exception {
         // given
         List<CustomUrl> urls = List.of(new CustomUrl("myAlias", "https://www.google.com", "https://www.mydomain.com/myAlias"));
         given(urlShortenerService.getAllCustomUrls()).willReturn(urls);
