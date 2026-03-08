@@ -50,7 +50,7 @@ public class UrlShortenerControllerTest {
         List<CustomUrl> urls = List.of(new CustomUrl("myAlias", "https://www.google.com", "https://www.mydomain.com/myAlias"));
         given(urlShortenerService.getAllCustomUrls()).willReturn(urls);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/urls"));
 
         // then
@@ -68,7 +68,7 @@ public class UrlShortenerControllerTest {
         CustomUrl customUrl = new CustomUrl(myAlias, "https://www.google.com", "https://www.mydomain.com/myAlias");
         given(urlShortenerService.getCustomUrlByAlias(myAlias)).willReturn(customUrl);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
 
         // then
@@ -83,7 +83,7 @@ public class UrlShortenerControllerTest {
         String myAlias = "myAlias";
         given(urlShortenerService.getCustomUrlByAlias(myAlias)).willReturn(null);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
 
         // then
@@ -96,7 +96,7 @@ public class UrlShortenerControllerTest {
         String myAlias = "myAlias";
         given(urlShortenerService.deleteCustomUrlByAlias(myAlias)).willReturn(true);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(delete("/url-shortener/myAlias"));
 
         // then
@@ -109,7 +109,7 @@ public class UrlShortenerControllerTest {
         String myAlias = "myAlias";
         given(urlShortenerService.deleteCustomUrlByAlias(myAlias)).willReturn(false);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(delete("/url-shortener/myAlias"));
 
         // then
@@ -126,7 +126,7 @@ public class UrlShortenerControllerTest {
         CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, shortUrl);
         given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(customUrl);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request)));
@@ -145,7 +145,7 @@ public class UrlShortenerControllerTest {
         ShortenUrlRequest request = new ShortenUrlRequest(myAlias, fullUrl);
         given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(null);
 
-        // when then
+        // when
         ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request)));
