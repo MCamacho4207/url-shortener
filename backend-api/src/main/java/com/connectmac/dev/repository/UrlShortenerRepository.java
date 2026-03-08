@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UrlShortenerRepo extends JpaRepository<CustomUrl, String> {
+public interface UrlShortenerRepository extends JpaRepository<CustomUrl, String> {
 }
