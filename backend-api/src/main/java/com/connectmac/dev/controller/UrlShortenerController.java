@@ -5,6 +5,7 @@ import com.connectmac.dev.model.ShortenUrlRequest;
 import com.connectmac.dev.service.UrlShortenerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class UrlShortenerController {
         }
 
         return ResponseEntity.status(HttpStatus.FOUND)
+                .contentType(MediaType.TEXT_HTML)
                 .location(URI.create(url.getFullUrl()))
                 .build();
     }

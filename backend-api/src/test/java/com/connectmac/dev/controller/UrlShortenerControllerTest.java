@@ -59,4 +59,35 @@ public class UrlShortenerControllerTest {
                 .andExpect(jsonPath("$[0].shortUrl").value("https://www.mydomain.com/myAlias"));
     }
 
+    @Test
+    void willReturn302RedirectUrlSuccess() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        CustomUrl customUrl = new CustomUrl(myAlias, "https://www.google.com", "https://www.mydomain.com/myAlias");
+        given(urlShortenerService.getCustomUrlByAlias(myAlias)).willReturn(customUrl);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
+
+        // then
+        resultCompletes
+                .andExpect(status().isFound())
+                .andExpect(content().contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(redirectedUrl("https://www.google.com"));
+    }
+
+    @Test
+    void willReturn404RedirectUrlFailure() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        given(urlShortenerService.getCustomUrlByAlias(myAlias)).willReturn(null);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
+
+        // then
+        resultCompletes
+                .andExpect(status().isNotFound());
+    }
+
 }
