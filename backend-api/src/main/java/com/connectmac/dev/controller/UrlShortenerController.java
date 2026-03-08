@@ -4,7 +4,6 @@ import com.connectmac.dev.model.CustomUrl;
 import com.connectmac.dev.model.ShortenUrlRequest;
 import com.connectmac.dev.model.ShortenUrlResponse;
 import com.connectmac.dev.service.UrlShortenerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
