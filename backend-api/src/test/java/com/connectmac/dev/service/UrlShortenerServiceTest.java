@@ -112,4 +112,36 @@ public class UrlShortenerServiceTest {
         verify(urlShortenerRepository, times(0)).delete(customUrl);
     }
 
+    @Test
+    void shouldShortenUrlSuccess() {
+        // given
+        String myAlias = "myAlias";
+        String fullUrl = "https://www.google.com";
+        CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, "http://localhost:8080/url-shortener/myAlias");
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.empty());
+        given(urlShortenerRepository.save(customUrl)).willReturn(customUrl);
+
+        // when
+        CustomUrl result  = urlShortenerService.shortenUrlWithCustomAlias(fullUrl, myAlias);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(customUrl);
+    }
+
+    @Test
+    void shouldReturnNullIfShorteningExistingUrlFailure() {
+        // given
+        String myAlias = "myAlias";
+        String fullUrl = "https://www.google.com";
+        CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, "http://localhost:8080/url-shortener/myAlias");
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.of(customUrl));
+
+        // when
+        CustomUrl result  = urlShortenerService.shortenUrlWithCustomAlias(fullUrl, myAlias);
+
+        // then
+        assertThat(result).isNull();
+    }
+
 }
