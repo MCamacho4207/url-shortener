@@ -4,7 +4,6 @@ import com.connectmac.dev.model.CustomUrl;
 import com.connectmac.dev.repository.UrlShortenerRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UrlShortenerService {
 
-    private static final String HOST_BASE_URL = "https://localhost:8080/url-shortener/";
+    private static final String HOST_BASE_URL = "http://localhost:8080/url-shortener/";
 
     private final UrlShortenerRepo urlShortenerRepo;
 
     public List<CustomUrl> getAllCustomUrls() {
         try {
-            return List.of(new CustomUrl("firstUrlalias", "http:www.google.com", "wowweee"));
+            return urlShortenerRepo.findAll();
         } catch (Exception e) {
             log.error("Error occurred while retrieving all URLs");
         }
@@ -30,8 +29,9 @@ public class UrlShortenerService {
     }
 
     public CustomUrl getCustomUrlByAlias(String alias) {
+        //TODO: Have smarter logic for "urls" alias validation
         try {
-            return new CustomUrl("my-alias", "", "");
+            return urlShortenerRepo.findById(alias).orElse(null);
         } catch (Exception e) {
             log.error("Fatal error occurred while attempting to delete custom url with alias: %s".formatted(alias));
         }
@@ -40,16 +40,12 @@ public class UrlShortenerService {
     }
 
     public boolean deleteCustomUrlByAlias(String alias) {
-        try {
-            urlShortenerRepo.deleteById(alias);
-        } catch (EmptyResultDataAccessException erdaException) {
-            return false;
-        } catch (Exception e) {
-            log.error("Fatal error occurred while attempting to delete custom url with alias: %s".formatted(alias));
-            return false;
-        }
-
-        return true;
+        return urlShortenerRepo.findById(alias)
+                .map(url -> {
+                    urlShortenerRepo.delete(url);
+                    return true;
+                })
+                .orElse(false);
     }
 
     public boolean shortenUrlWithCustomAlias(String fullUrl, String customAlias) {

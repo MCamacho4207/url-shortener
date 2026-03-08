@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,10 +26,16 @@ public class UrlShortenerController {
     }
 
     @GetMapping("/{alias}")
-    public CustomUrl getUrlByAlias(@PathVariable("alias") String alias) {
+    public ResponseEntity<HttpStatus> redirectUrlByAlias(@PathVariable("alias") String alias) {
         CustomUrl url = urlShortenerService.getCustomUrlByAlias(alias);
 
-        return url;
+        if (url == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(url.getFullUrl()))
+                .build();
     }
 
     @DeleteMapping("/{alias}")
