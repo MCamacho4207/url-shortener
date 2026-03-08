@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
@@ -127,6 +128,25 @@ public class UrlShortenerServiceTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo(customUrl);
+    }
+
+    @Test
+    void shouldShortenUrlWhenNoCustomAliasProvidedSuccess() {
+        // given
+        String myAlias = null;
+        String fullUrl = "https://www.google.com";
+        given(urlShortenerRepository.save(any(CustomUrl.class)))
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        CustomUrl result = urlShortenerService.shortenUrlWithCustomAlias(fullUrl, myAlias);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getFullUrl()).isEqualTo(fullUrl);
+        assertThat(result.getAlias()).isNotNull();
+        assertThat(result.getAlias()).hasSize(9);
+        verify(urlShortenerRepository).save(any(CustomUrl.class));
     }
 
     @Test

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,9 @@ import java.util.List;
 public class UrlShortenerService {
 
     private static final String HOST_BASE_URL = "http://localhost:8080/url-shortener/";
+    private static final String ALIAS_VALID_CHARACTERS = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    private static final Integer ALIAS_LENGTH = 9;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UrlShortenerRepository urlShortenerRepository;
 
@@ -50,6 +54,10 @@ public class UrlShortenerService {
 
     public CustomUrl shortenUrlWithCustomAlias(String fullUrl, String customAlias) {
         try {
+            if (customAlias == null) {
+                customAlias = generateCustomAlias();
+            }
+
             if (urlShortenerRepository.findById(customAlias).isPresent()) {
                 return null;
             }
@@ -59,6 +67,25 @@ public class UrlShortenerService {
             log.error("Fatal error occurred while attempting to shorten url: %s with alias: %s".formatted(fullUrl, customAlias));
             return null;
         }
+    }
+
+    private String generateCustomAlias() {
+        String candidateAlias;
+
+        do {
+            candidateAlias = randomAlias();
+        } while (urlShortenerRepository.existsById(candidateAlias));
+
+        return candidateAlias;
+    }
+
+    private String randomAlias() {
+        StringBuilder sb = new StringBuilder(ALIAS_LENGTH);
+        for (int i = 0; i < ALIAS_LENGTH; i++) {
+            int randomIndex = RANDOM.nextInt(ALIAS_VALID_CHARACTERS.length());
+            sb.append(ALIAS_VALID_CHARACTERS.charAt(randomIndex));
+        }
+        return sb.toString();
     }
 
 }
