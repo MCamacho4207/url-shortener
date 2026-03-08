@@ -2,7 +2,9 @@ package com.connectmac.dev.controller;
 
 import com.connectmac.dev.model.CustomUrl;
 import com.connectmac.dev.model.ShortenUrlRequest;
+import com.connectmac.dev.model.ShortenUrlResponse;
 import com.connectmac.dev.service.UrlShortenerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,13 +52,17 @@ public class UrlShortenerController {
     }
 
     @PostMapping("/shorten")
-    public ResponseEntity<HttpStatus> shortenUrl(@RequestBody ShortenUrlRequest shortenUrlRequest) {
-        boolean status = urlShortenerService.shortenUrlWithCustomAlias(shortenUrlRequest.fullUrl(),
+    public ResponseEntity<ShortenUrlResponse> shortenUrl(@RequestBody ShortenUrlRequest shortenUrlRequest) {
+        CustomUrl customUrl = urlShortenerService.shortenUrlWithCustomAlias(shortenUrlRequest.fullUrl(),
                 shortenUrlRequest.customAlias());
-        if(status)
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        else
+
+        if (customUrl == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ShortenUrlResponse(customUrl.getShortUrl()));
     }
 
 }

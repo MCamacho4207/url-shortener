@@ -2,7 +2,9 @@ package com.connectmac.dev.controller;
 
 import com.connectmac.dev.ApplicationTestConfig;
 import com.connectmac.dev.model.CustomUrl;
+import com.connectmac.dev.model.ShortenUrlRequest;
 import com.connectmac.dev.service.UrlShortenerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = ApplicationTestConfig.class)
@@ -35,6 +35,8 @@ public class UrlShortenerControllerTest {
     private UrlShortenerService urlShortenerService;
 
     private MockMvc mockMvc;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -53,7 +55,7 @@ public class UrlShortenerControllerTest {
 
         // then
         resultCompletes.andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].alias").value("myAlias"))
                 .andExpect(jsonPath("$[0].fullUrl").value("https://www.google.com"))
                 .andExpect(jsonPath("$[0].shortUrl").value("https://www.mydomain.com/myAlias"));
@@ -112,6 +114,45 @@ public class UrlShortenerControllerTest {
 
         // then
         resultCompletes.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void willReturn201PostShortenUrlSuccess() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        String fullUrl = "https://www.google.com";
+        String shortUrl = "https://www.mydomain.com/myAlias";
+        ShortenUrlRequest request = new ShortenUrlRequest(myAlias, fullUrl);
+        CustomUrl customUrl = new CustomUrl(myAlias, fullUrl, shortUrl);
+        given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(customUrl);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request)));
+
+        // then
+        resultCompletes.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.shortUrl").value("https://www.mydomain.com/myAlias"));
+    }
+
+    @Test
+    void willReturn400PostShortenUrlFailure() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        String fullUrl = "https://www.google.com";
+        String shortUrl = "https://www.mydomain.com/myAlias";
+        ShortenUrlRequest request = new ShortenUrlRequest(myAlias, fullUrl);
+        given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(null);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(post("/url-shortener/shorten")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request)));
+
+        // then
+        resultCompletes.andExpect(status().isBadRequest());
     }
 
 }

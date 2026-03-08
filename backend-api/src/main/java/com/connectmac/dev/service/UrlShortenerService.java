@@ -48,19 +48,17 @@ public class UrlShortenerService {
                 .orElse(false);
     }
 
-    public boolean shortenUrlWithCustomAlias(String fullUrl, String customAlias) {
+    public CustomUrl shortenUrlWithCustomAlias(String fullUrl, String customAlias) {
         try {
             if (urlShortenerRepo.findById(customAlias).isPresent()) {
-                return false;
+                return null;
             }
 
-            urlShortenerRepo.save(new CustomUrl(customAlias, fullUrl, HOST_BASE_URL+customAlias));
+            return urlShortenerRepo.save(new CustomUrl(customAlias, fullUrl, HOST_BASE_URL+customAlias));
         } catch (Exception e) {
             log.error("Fatal error occurred while attempting to shorten url: %s with alias: %s".formatted(fullUrl, customAlias));
-            return false;
+            return null;
         }
-
-        return true;
     }
 
 }
