@@ -8,9 +8,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @WebMvcTest(UrlShortenerService.class)
 public class UrlShortenerServiceTest {
@@ -41,11 +45,71 @@ public class UrlShortenerServiceTest {
         NullPointerException npe = new NullPointerException("Expected exception message");
         given(urlShortenerRepository.findAll()).willThrow(npe);
 
-        /// when
+        // when
         List<CustomUrl> results = urlShortenerService.getAllCustomUrls();
 
         // then
         assertThat(results).hasSize(0);
+    }
+
+    @Test
+    void shouldFindUrlByAliasSuccess() {
+        // given
+        String myAlias = "myAlias";
+        CustomUrl customUrl = new CustomUrl(myAlias, "https://www.google.com", "https://www.mydomain.com/myAlias");
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.of(customUrl));
+
+        // when
+        CustomUrl result = urlShortenerService.getCustomUrlByAlias(myAlias);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(customUrl);
+    }
+
+    @Test
+    void shouldReturnNullForFindUrlByAliasFailure() {
+        // given
+        String myAlias = "myAlias";
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.empty());
+
+        // when
+        CustomUrl result = urlShortenerService.getCustomUrlByAlias(myAlias);
+
+        // then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void shouldDeleteUrlByAliasSuccess() {
+        // given
+        String myAlias = "myAlias";
+        CustomUrl customUrl = new CustomUrl(myAlias, "https://www.google.com", "https://www.mydomain.com/myAlias");
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.of(customUrl));
+        willDoNothing().given(urlShortenerRepository).delete(customUrl);
+
+        // when
+        boolean result = urlShortenerService.deleteCustomUrlByAlias(myAlias);
+
+        // then
+        assertThat(result).isTrue();
+        verify(urlShortenerRepository, times(1)).delete(customUrl);
+    }
+
+    @Test
+    void shouldFailToDeleteUrlByAliasFailure() {
+        // given
+        String myAlias = "myAlias";
+        CustomUrl customUrl = new CustomUrl(myAlias, "https://www.google.com", "https://www.mydomain.com/myAlias");
+        given(urlShortenerRepository.findById(myAlias)).willReturn(Optional.empty());
+        willDoNothing().given(urlShortenerRepository).delete(customUrl);
+
+        // when
+        boolean result = urlShortenerService.deleteCustomUrlByAlias(myAlias);
+
+        // then
+        assertThat(result).isFalse();
+        verify(urlShortenerRepository, times(0)).delete(customUrl);
     }
 
 }

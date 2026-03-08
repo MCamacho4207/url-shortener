@@ -41,8 +41,8 @@ public class UrlShortenerService {
 
     public boolean deleteCustomUrlByAlias(String alias) {
         return urlShortenerRepository.findById(alias)
-                .map(url -> {
-                    urlShortenerRepository.delete(url);
+                .map(customUrl -> {
+                    urlShortenerRepository.delete(customUrl);
                     return true;
                 })
                 .orElse(false);
