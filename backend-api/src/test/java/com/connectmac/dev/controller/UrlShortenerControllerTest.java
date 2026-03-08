@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,8 +52,7 @@ public class UrlShortenerControllerTest {
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/urls"));
 
         // then
-        resultCompletes
-                .andExpect(status().isOk())
+        resultCompletes.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$[0].alias").value("myAlias"))
                 .andExpect(jsonPath("$[0].fullUrl").value("https://www.google.com"))
@@ -70,8 +70,7 @@ public class UrlShortenerControllerTest {
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
 
         // then
-        resultCompletes
-                .andExpect(status().isFound())
+        resultCompletes.andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(redirectedUrl("https://www.google.com"));
     }
@@ -86,8 +85,33 @@ public class UrlShortenerControllerTest {
         ResultActions resultCompletes = mockMvc.perform(get("/url-shortener/myAlias"));
 
         // then
-        resultCompletes
-                .andExpect(status().isNotFound());
+        resultCompletes.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void willReturn204DeleteUrlSuccess() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        given(urlShortenerService.deleteCustomUrlByAlias(myAlias)).willReturn(true);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(delete("/url-shortener/myAlias"));
+
+        // then
+        resultCompletes.andExpect(status().isNoContent());
+    }
+
+    @Test
+    void willReturn404DeleteUrlFailure() throws Exception {
+        // given
+        String myAlias = "myAlias";
+        given(urlShortenerService.deleteCustomUrlByAlias(myAlias)).willReturn(false);
+
+        // when then
+        ResultActions resultCompletes = mockMvc.perform(delete("/url-shortener/myAlias"));
+
+        // then
+        resultCompletes.andExpect(status().isNotFound());
     }
 
 }
