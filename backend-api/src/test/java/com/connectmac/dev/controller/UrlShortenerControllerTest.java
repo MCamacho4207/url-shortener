@@ -36,7 +36,7 @@ public class UrlShortenerControllerTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -142,7 +142,6 @@ public class UrlShortenerControllerTest {
         // given
         String myAlias = "myAlias";
         String fullUrl = "https://www.google.com";
-        String shortUrl = "https://www.mydomain.com/myAlias";
         ShortenUrlRequest request = new ShortenUrlRequest(myAlias, fullUrl);
         given(urlShortenerService.shortenUrlWithCustomAlias(myAlias, fullUrl)).willReturn(null);
 
