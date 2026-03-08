@@ -10,7 +10,12 @@ public class UrlShortenerServiceTest {
 
     @Test
     void shouldFindAllUrls() {
+        // given
 
+
+        // when
+
+        // then
     }
 
 }

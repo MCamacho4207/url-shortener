@@ -1,6 +1,5 @@
 package com.connectmac.dev.controller;
 
-import com.connectmac.dev.ApplicationTestConfig;
 import com.connectmac.dev.model.CustomUrl;
 import com.connectmac.dev.model.ShortenUrlRequest;
 import com.connectmac.dev.service.UrlShortenerService;
@@ -8,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,9 +22,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ContextConfiguration(classes = ApplicationTestConfig.class)
-@WebAppConfiguration
+@WebMvcTest(UrlShortenerController.class)
+@AutoConfigureMockMvc
 public class UrlShortenerControllerTest {
 
     @Autowired
@@ -34,6 +32,7 @@ public class UrlShortenerControllerTest {
     @MockBean
     private UrlShortenerService urlShortenerService;
 
+    @Autowired
     private MockMvc mockMvc;
 
     private final ObjectMapper mapper = new ObjectMapper();
