@@ -74,4 +74,7 @@ url-shortener
 ├── openapi.yaml          # Swagger
 └── pom.xml               # Parent Maven Project
 ```
+---
 
+## Example Frontend
+![Frontend_Example](example_frontend.png)
