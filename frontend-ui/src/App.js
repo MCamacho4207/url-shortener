@@ -8,6 +8,7 @@ const API_BASE = "/url-shortener";
 const App = () => {
     const [urls, setUrls] = useState([]);
     const [form, setForm] = useState({ fullUrl: '', customAlias: '' });
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => { fetchUrls(); }, []);
 
@@ -18,10 +19,18 @@ const App = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.post(`${API_BASE}/shorten`, form);
-        setForm({ fullUrl: '', customAlias: '' });
-        fetchUrls();
+        setErrorMessage('');
+
+        try {
+            await axios.post(`${API_BASE}/shorten`, form);
+            setForm({ fullUrl: '', customAlias: '' });
+            fetchUrls();
+        } catch (err) {
+            const serverError = err.response?.data?.error || "An unexpected error occurred";
+            setErrorMessage(serverError);
+        }
     };
+
 
     const deleteUrl = async (alias) => {
         await axios.delete(`${API_BASE}/${alias}`);
@@ -33,7 +42,6 @@ const App = () => {
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="main-title">URL Shortener</h1>
 
-            {/* Input Card */}
             <div className="card">
                 <h3>Create New Link</h3>
                 <form onSubmit={handleSubmit} className="input-group">
@@ -51,9 +59,21 @@ const App = () => {
                     />
                     <button type="submit">Shorten</button>
                 </form>
+                {errorMessage && (
+                        <div style={{
+                            color: '#ff4d4d',
+                            backgroundColor: 'rgba(255, 77, 77, 0.1)',
+                            padding: '10px',
+                            borderRadius: '6px',
+                            marginTop: '15px',
+                            fontSize: '0.9rem',
+                            border: '1px solid rgba(255, 77, 77, 0.3)'
+                        }}>
+                            ⚠️ {errorMessage}
+                        </div>
+                    )}
             </div>
 
-            {/* List Card */}
             <div className="card">
                 <h3>Your Active Links</h3>
                 <table className="url-table">
