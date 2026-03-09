@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import logo from './logo.svg';
 import './App.css';
 
 const API_BASE = "/url-shortener";
@@ -29,7 +30,8 @@ const App = () => {
 
     return (
         <div className="container">
-            <h1 style={{ textAlign: 'center', color: '#333' }}>URL Shortener</h1>
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1 className="main-title">URL Shortener</h1>
 
             {/* Input Card */}
             <div className="card">
@@ -67,7 +69,7 @@ const App = () => {
                             <tr key={u.alias}>
                                 <td><a href={u.shortUrl} target="_blank">{u.alias}</a></td>
                                 <td style={{ color: '#666', fontSize: '0.9rem' }}>
-                                    {u.fullUrl.substring(0, 30)}...
+                                    {u.fullUrl.substring(0, 50)}...
                                 </td>
                                 <td>
                                     <button className="delete-btn" onClick={() => deleteUrl(u.alias)}>
