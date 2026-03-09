@@ -36,6 +36,9 @@ Time spent: roughly ~ 8 - 10 hours
   - Docker Desktop/CLI
   - Running MySQL database on localhost:3306
 
+**Note** You can run a database in Docker with the following command:
+
+`docker run -d --name mysql-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=localdev -e MYSQL_DATABASE=url_shortener_db mysql:latest`
 ## Build and run steps
 
 - **Running Locally:**
