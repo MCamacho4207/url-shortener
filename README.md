@@ -48,7 +48,7 @@ Time spent: roughly ~ 8 - 10 hours
   - Frontend UI
     - `cd frontend-ui`
     - `npm install`
-    - `npm build`
+    - `npm start`
 
 
 - **Running in Docker:**
