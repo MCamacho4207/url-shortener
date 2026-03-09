@@ -55,6 +55,8 @@ Time spent: roughly ~ 8 - 10 hours
   - From the url-shortener parent directory run:
   - `docker-compose up --build` (optional: -d flag for headless run)
 
+You can now view your running frontend application on http://localhost:3000 with backend requests running on http://localhost:8080
+
 **NOTE**: Application may fail to work as expected with no available running database 
 
 ---
