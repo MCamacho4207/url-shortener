@@ -1,4 +1,4 @@
 package com.connectmac.dev.model;
 
-public record ShortenUrlResponse(String shortUrl) {
+public record ShortenUrlResponse(String shortUrl, String error) {
 }

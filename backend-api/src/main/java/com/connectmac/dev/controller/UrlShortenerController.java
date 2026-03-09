@@ -5,6 +5,7 @@ import com.connectmac.dev.model.ShortenUrlRequest;
 import com.connectmac.dev.model.ShortenUrlResponse;
 import com.connectmac.dev.service.UrlShortenerService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/url-shortener")
 public class UrlShortenerController {
+
+    private static final String CUSTOM_ALIAS_INVALID_SPECIAL_CHARACTERS = "/.?#%";
 
     private final UrlShortenerService urlShortenerService;
 
@@ -32,7 +35,7 @@ public class UrlShortenerController {
         CustomUrl url = urlShortenerService.getCustomUrlByAlias(alias);
 
         if (url == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         return ResponseEntity.status(HttpStatus.FOUND)
@@ -52,16 +55,24 @@ public class UrlShortenerController {
 
     @PostMapping("/shorten")
     public ResponseEntity<ShortenUrlResponse> shortenUrl(@RequestBody ShortenUrlRequest shortenUrlRequest) {
+        if (StringUtils.containsAny(shortenUrlRequest.customAlias(), CUSTOM_ALIAS_INVALID_SPECIAL_CHARACTERS)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new ShortenUrlResponse(null, "Alias contains invalid characters"));
+        }
+
         CustomUrl customUrl = urlShortenerService.shortenUrlWithCustomAlias(shortenUrlRequest.fullUrl(),
                 shortenUrlRequest.customAlias());
 
         if (customUrl == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new ShortenUrlResponse(null, "Alias already exists, cannot create another alias"));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ShortenUrlResponse(customUrl.getShortUrl()));
+                .body(new ShortenUrlResponse(customUrl.getShortUrl(), null));
     }
 
 }

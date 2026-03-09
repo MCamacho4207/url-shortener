@@ -4,6 +4,7 @@ import com.connectmac.dev.model.CustomUrl;
 import com.connectmac.dev.repository.UrlShortenerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -16,7 +17,7 @@ import java.util.List;
 public class UrlShortenerService {
 
     private static final String HOST_BASE_URL = "http://localhost:8080/url-shortener/";
-    private static final String ALIAS_VALID_CHARACTERS = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    private static final String RANDOM_ALIAS_AVAILABLE_CHARACTERS = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
     private static final Integer ALIAS_LENGTH = 9;
     private static final SecureRandom RANDOM = new SecureRandom();
 
@@ -54,7 +55,7 @@ public class UrlShortenerService {
 
     public CustomUrl shortenUrlWithCustomAlias(String fullUrl, String customAlias) {
         try {
-            if (customAlias == null) {
+            if (customAlias == null || StringUtils.isBlank(customAlias)) {
                 customAlias = generateCustomAlias();
             }
 
@@ -82,8 +83,8 @@ public class UrlShortenerService {
     private String randomAlias() {
         StringBuilder sb = new StringBuilder(ALIAS_LENGTH);
         for (int i = 0; i < ALIAS_LENGTH; i++) {
-            int randomIndex = RANDOM.nextInt(ALIAS_VALID_CHARACTERS.length());
-            sb.append(ALIAS_VALID_CHARACTERS.charAt(randomIndex));
+            int randomIndex = RANDOM.nextInt(RANDOM_ALIAS_AVAILABLE_CHARACTERS.length());
+            sb.append(RANDOM_ALIAS_AVAILABLE_CHARACTERS.charAt(randomIndex));
         }
         return sb.toString();
     }
