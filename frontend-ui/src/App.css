@@ -36,3 +36,54 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+button {
+  padding: 12px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover { background: #0056b3; }
+
+.url-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.url-table th { text-align: left; padding: 12px; border-bottom: 2px solid #eee; }
+.url-table td { padding: 12px; border-bottom: 1px solid #eee; }
+
+.delete-btn { background: #ff4d4d; padding: 6px 12px; font-size: 0.8rem; }
