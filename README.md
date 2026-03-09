@@ -1,44 +1,74 @@
-# URL Shortener Coding Exercise
+# TPX Impact URL Shortener Tool
 
-## Task
+URL Shortener project built with a Java 17 Spring Boot backend and a decoupled ReactJS frontend. Data is stored on a separate database which needs to be set up as a prerequisite.
 
-Build a simple **URL shortener** in a **preferably JVM-based language** (e.g. Java, Kotlin).
+Follow the build steps below to run the app locally or containerised in Docker
 
-It should:
+Time spent: roughly ~ 8 - 10 hours
 
-- Accept a full URL and return a shortened URL.
-- A shortened URL should have a randomly generated alias.
-- Allow a user to **customise the shortened URL** if they want to (e.g. user provides `my-custom-alias` instead of a random string).
-- Persist the shortened URLs across restarts.
-- Expose a **decoupled web frontend** built with a modern framework (e.g., React, Next.js, Vue.js, Angular, Flask with templates). This can be lightweight form/output just to demonstrate interaction with the API. Feel free to use UI frameworks like Bootstrap, Material-UI, Tailwind CSS, GOV.UK design system, etc. to speed up development.
-- Expose a **RESTful API** to perform create/read/delete operations on URLs.  
-  → Refer to the provided [`openapi.yaml`](./openapi.yaml) for API structure and expected behaviour.
-- Include the ability to **delete a shortened URL** via the API.
-- **Have tests**.
-- Be containerised (e.g. Docker).
-- Include instructions for running locally.
+## Features
 
-## Rules
+- **Shorten URLs:** Generate a random alias or provide a custom one
+- **Persistence:** Shortened URLs are saved to a MySQL database and persist across restarts
+- **RESTful API:** Create, Read, Delete URLs following the provided [`openapi.yaml`](./openapi.yaml) spec
+- **Decoupled Frontend:** A simple modern React UI to interact with the API
+- **Validation:** Strict input validation and graceful error handling on both ends
 
-- Fork the repository and work in your fork. Do not push directly to the main repository.
-- There is no time limit, we want to see something you are proud of. We would like to understand roughly how long you spent on it though.
-- **Commit often with meaningful messages.**
-- Write tests.
-- The API should validate inputs and handle errors gracefully.
-- The Frontend should show errors from the API appropriately.
-- Use the provided [`openapi.yaml`](./openapi.yaml) as the API contract.
-- Focus on clean, maintainable code.
-- AI tools (e.g., GitHub Copilot, ChatGPT) are allowed, but please **do not** copy-paste large chunks of code. Use them as assistants, not as a replacement for your own work. We will be asking.
+---
 
-## Deliverables
+## Tech Stack
+- **Backend:** Java 17, Spring Boot, Spring Data JPA, Hibernate
+- **Frontend:**  React, Node, Nginx
+- **Database:**  MySQL
+- **Testing:**  JUnit 5, Mockito
+- **Containerisation:**  Docker & Docker Compose
 
-- Working software.
-- Decoupled web frontend (using a modern framework like React, Next.js, Vue.js, Angular, or Flask with templates).
-- RESTful API matching the OpenAPI spec.
-- Tests.
-- A git commit history that shows your thought process.
-- Dockerfile.
-- README with:
-  - How to build and run locally.
-  - Example usage (frontend and API).
-  - Any notes or assumptions.
+### Prerequisites
+
+- **Running Locally:** 
+  - Java 17+
+  - Maven 3.5+
+  - Node.js 18+
+  - Running MySQL database on localhost:3306
+
+
+- **Running in Docker:**
+  - Docker Desktop/CLI
+  - Running MySQL database on localhost:3306
+
+## Build and run steps
+
+- **Running Locally:**
+  - Backend API
+    - `cd backend-api`
+    - `mvn spring-boot:run`
+  - Frontend UI
+    - `cd frontend-ui`
+    - `npm install`
+    - `npm build`
+
+
+- **Running in Docker:**
+  - From the url-shortener parent directory run:
+  - `docker-compose up --build` (optional: -d flag for headless run)
+
+**NOTE**: Application may fail to work as expected with no available running database 
+
+---
+
+## Project Structure
+
+```
+url-shortener
+├── backend-api/          # Spring Boot Application
+│   ├── src/              # Logic & Tests
+│   └── Dockerfile        # Multi-stage Java build
+├── frontend-ui/          # React Application
+│   ├── src/              # UI Components
+│   ├── nginx.conf        # Routing & Proxy config
+│   └── Dockerfile        # Node build + Nginx serve
+├── docker-compose.yml    # Orchestration
+├── openapi.yaml          # Swagger
+└── pom.xml               # Parent Maven Project
+```
+
